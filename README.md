@@ -43,4 +43,11 @@
 
 ---
 
+### 自动化保活状态
+<!-- AUTO_KEEPALIVE_START -->
+- **最后保活更新时间 (UTC+8)**: 待运行后自动更新
+<!-- AUTO_KEEPALIVE_END -->
+
+---
+
 **⚠️ 免责声明**：本脚本仅供学习交流使用，使用者需遵守 [HidenCloud](https://hidencloud.com) 的服务条款。因使用本脚本造成的任何问题，作者不承担任何责任。

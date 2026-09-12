@@ -7,7 +7,7 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
 
 jobs:
   Renew-HidenCloud:
@@ -55,6 +55,31 @@ jobs:
           pkill -f chrome || true
           pkill -f Xvfb || true
           rm -f sing-box sing-box-config.json sing-box.log
+
+      - name: ⏰ 更新 README 保活时间戳并推送
+        if: always()
+        run: |
+          python3 -c "
+          import datetime, re
+          tz = datetime.timezone(datetime.timedelta(hours=8))
+          now = datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+          with open('README.md', 'r', encoding='utf-8') as f:
+              content = f.read()
+          new_content = re.sub(
+              r'<!-- AUTO_KEEPALIVE_START -->[\s\S]*?<!-- AUTO_KEEPALIVE_END -->',
+              f'<!-- AUTO_KEEPALIVE_START -->\n- **最后保活更新时间 (UTC+8)**: {now}\n<!-- AUTO_KEEPALIVE_END -->',
+              content
+          )
+          with open('README.md', 'w', encoding='utf-8') as f:
+              f.write(new_content)
+          "
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: 自动更新保活时间戳 [skip ci]"
+            git push origin HEAD:${{ github.ref_name }} || git push
+          fi
 
       - name: 🧹 清理旧的工作流运行记录
         if: always()
